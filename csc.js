@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         CanvasLMS Semester Choice
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/JohnTheBoss/CanvasLMS-Semester-Choice
 // @version      1.0
 // @updateURL    https://raw.githubusercontent.com/JohnTheBoss/CanvasLMS-Semester-Choice/master/csc.js
 // @downloadURL  https://raw.githubusercontent.com/JohnTheBoss/CanvasLMS-Semester-Choice/master/csc.js
