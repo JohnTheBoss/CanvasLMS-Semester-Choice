@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CanvasLMS Semester Choice
 // @namespace    https://github.com/JohnTheBoss/CanvasLMS-Semester-Choice
-// @version      1.0
+// @version      1.0.1
 // @updateURL    https://raw.githubusercontent.com/JohnTheBoss/CanvasLMS-Semester-Choice/master/csc.js
 // @downloadURL  https://raw.githubusercontent.com/JohnTheBoss/CanvasLMS-Semester-Choice/master/csc.js
 // @description  CanvasLMS Semester Choice
@@ -10,52 +10,49 @@
 // @grant        none
 // ==/UserScript==
 
-function RenderTargyak(selectedFelev){
-      const OsszesTargy = document.getElementsByClassName("ic-DashboardCard");
-      for(let i = 0; i< OsszesTargy.length; i++){
-        let melyikFelev = OsszesTargy[i].getElementsByClassName("ic-DashboardCard__header-term ellipsis")[0].getAttribute("title");
+function renderCourses(selectedSemester){
+    const allCourses = document.getElementsByClassName("ic-DashboardCard");
+    for(let course of allCourses){
+      const currentSemester = course.getElementsByClassName("ic-DashboardCard__header-term ellipsis")[0].innerText;
 
-        if(melyikFelev === selectedFelev || selectedFelev === "all"){
-            OsszesTargy[i].style = "display: inline-block";
-        } else {
-             OsszesTargy[i].style = "display: none";
-        }
-    }
+      if(currentSemester == selectedSemester || selectedSemester == "all"){
+          course.style = "display: inline-block";
+      } else {
+           course.style = "display: none";
+      }
+  }
 }
 
 (function() {
-    'use strict';
+  'use strict';
+  window.addEventListener('load', function() {
+      const sideBar = document.getElementById('right-side');
+      const data = document.getElementsByClassName('ic-DashboardCard__header-term');
+      const semesters = [];
+      let semesterSelect = '';
+      for(var semester of data){
+          if(!semesters.includes(semester.getAttribute('title'))){
+              semesters.push(semester.getAttribute('title'));
+              semesterSelect += `<option value="${semester.getAttribute('title')}">${semester.getAttribute('title')}</option>`;
+          }
+      }
 
-    const SideBar = document.getElementById("right-side");
-    const osszesFelev = document.getElementsByClassName("ic-DashboardCard__header-term ellipsis");
-    let felevek = [];
-    let FelevSelect = "";
+      let selectBox = document.createElement('div');
+      selectBox.id = "JTB_felev_select_box";
+      selectBox.innerHTML = `<h2>Semester:</h2><select id="selectSemester">${semesterSelect}<option value="all">All</option></select>`;
 
-    // console.log(osszesFelev.length);
-    // console.log(osszesFelev);
+       sideBar.parentNode.insertBefore(selectBox, sideBar);
 
-    for(let i = 0; i<osszesFelev.length; i++){
-        console.log(osszesFelev[i]);
-        let felev = osszesFelev[i].getAttribute("title");
-        if(!felevek.includes(felev)){
-            felevek.push(felev);
-            FelevSelect += `<option value="${felev}">${felev}</option>`;
-        }
-    }
+      const selectSemester = document.getElementById("selectSemester");
 
-    let selectBox = document.createElement('div');
-    selectBox.id = "JTB_felev_select_box";
-    selectBox.innerHTML = `<h2>Semester:</h2><select id="selectFelev">${FelevSelect}<option value="all">All</option></select>`;
+      selectSemester.options.selectedIndex = (semesters.length -1);
 
-    SideBar.parentNode.insertBefore(selectBox, SideBar);
+      renderCourses(selectSemester.value);
 
-    const selectFelev = document.getElementById("selectFelev");
+      selectSemester.addEventListener('change', function() {
+          renderCourses(this.value);
+      });
 
-    selectFelev.options.selectedIndex = (felevek.length -1);
 
-    RenderTargyak(selectFelev.value);
-
-    selectFelev.addEventListener('change', function() {
-        RenderTargyak(this.value);
-    });
+  }, false);
 })();
