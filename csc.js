@@ -1,14 +1,18 @@
 // ==UserScript==
 // @name         CanvasLMS Semester Choice
 // @namespace    https://github.com/JohnTheBoss/CanvasLMS-Semester-Choice
-// @version      1.0.1
+// @version      1.1.0
 // @updateURL    https://raw.githubusercontent.com/JohnTheBoss/CanvasLMS-Semester-Choice/master/csc.js
 // @downloadURL  https://raw.githubusercontent.com/JohnTheBoss/CanvasLMS-Semester-Choice/master/csc.js
+// @supportURL   https://github.com/JohnTheBoss/CanvasLMS-Semester-Choice/issues
+// @source       https://github.com/JohnTheBoss/CanvasLMS-Semester-Choice
 // @description  CanvasLMS Semester Choice
 // @author       JohnTheBoss
-// @match        https://canvas.elte.hu
+// @include      https://*canvas*.*/*
 // @grant        none
 // ==/UserScript==
+
+ 'use strict';
 
 function renderCourses(selectedSemester){
     const allCourses = document.getElementsByClassName("ic-DashboardCard");
@@ -24,17 +28,20 @@ function renderCourses(selectedSemester){
 }
 
 (function() {
-  'use strict';
   window.addEventListener('load', function() {
       const sideBar = document.getElementById('right-side');
       const data = document.getElementsByClassName('ic-DashboardCard__header-term');
       const semesters = [];
       let semesterSelect = '';
-      for(var semester of data){
+      for(let semester of data){
           if(!semesters.includes(semester.getAttribute('title'))){
               semesters.push(semester.getAttribute('title'));
-              semesterSelect += `<option value="${semester.getAttribute('title')}">${semester.getAttribute('title')}</option>`;
           }
+      }
+      // Sort semesters
+      semesters.sort();
+      for(let semester of semesters){
+          semesterSelect += `<option value="${semester}">${semester}</option>`;
       }
 
       let selectBox = document.createElement('div');
@@ -52,7 +59,6 @@ function renderCourses(selectedSemester){
       selectSemester.addEventListener('change', function() {
           renderCourses(this.value);
       });
-
 
   }, false);
 })();
